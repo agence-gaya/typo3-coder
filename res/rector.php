@@ -58,8 +58,8 @@ $rectorConfigBuilder = RectorConfig::configure()
         \Ssch\TYPO3Rector\TYPO313\v4\MigratePluginContentElementAndPluginSubtypesRector::class
     ]);
 
-if (file_exists('rector.php')) {
-    include_once 'rector.php';
+if (file_exists('rector.project.php')) {
+    include_once 'rector.project.php';
 }
 
 return $rectorConfigBuilder;
