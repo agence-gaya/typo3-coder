@@ -5,8 +5,9 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
-use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector
+use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 use Ssch\TYPO3Rector\Configuration\Typo3Option;
+use Ssch\TYPO3Rector\Set\Typo3LevelSetList;
 use Ssch\TYPO3Rector\Set\Typo3SetList;
 use Rector\Set\ValueObject\SetList;
 
@@ -16,10 +17,7 @@ $rectorConfigBuilder = RectorConfig::configure()
     ])
     ->withSets([
         Typo3SetList::CODE_QUALITY,
-        Typo3SetList::TYPO3_10,
-        Typo3SetList::TYPO3_11,
-        Typo3SetList::TYPO3_12,
-        Typo3SetList::TYPO3_13,
+        Typo3LevelSetList::UP_TO_TYPO3_13,
         SetList::PRIVATIZATION,
         SetList::CODING_STYLE,
         SetList::CODE_QUALITY,

@@ -10,8 +10,5 @@ return FractorConfiguration::configure()
         __DIR__ . '/packages'
     ])
     ->withSets([
-        Typo3LevelSetList::UP_TO_TYPO3_10,
-        Typo3LevelSetList::UP_TO_TYPO3_11,
-        Typo3LevelSetList::UP_TO_TYPO3_12,
         Typo3LevelSetList::UP_TO_TYPO3_13,
     ]);
