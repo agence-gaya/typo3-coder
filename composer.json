@@ -10,7 +10,8 @@
     "ssch/typo3-rector": "^3.6",
     "typo3/testing-framework": "^9.2",
     "friendsofphp/php-cs-fixer": "^3.85",
-    "a9f/typo3-fractor": "^0.5",
+    "a9f/typo3-fractor": "0.5.3",
+    "a9f/fractor": "0.5.3",
     "overtrue/phplint": "^9.6"
   },
   "require-dev": {
