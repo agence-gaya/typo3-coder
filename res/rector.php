@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector
 use Ssch\TYPO3Rector\Configuration\Typo3Option;
 use Ssch\TYPO3Rector\Set\Typo3SetList;
 use Rector\Set\ValueObject\SetList;
@@ -48,6 +49,9 @@ $rectorConfigBuilder = RectorConfig::configure()
 
         // Disable creation of CTypeMigration.php migration file
         \Ssch\TYPO3Rector\TYPO313\v4\MigratePluginContentElementAndPluginSubtypesRector::class
+    ])
+    ->withRules([
+        AddVoidReturnTypeWhereNoReturnRector::class,
     ]);
 
 if (file_exists('rector.project.php')) {
