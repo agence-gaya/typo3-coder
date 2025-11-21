@@ -4,8 +4,8 @@ $config = new \PhpCsFixer\Config();
 $config->setRiskyAllowed(true);
 $config->setRules([
     '@DoctrineAnnotation' => true,
-    '@PER-CS2.0' => true,
-    '@PHP82Migration' => true,
+    '@PER-CS2x0' => true,
+    '@PHP8x2Migration' => true,
     'array_syntax' => ['syntax' => 'short'],
     'declare_equal_normalize' => ['space' => 'none'],
     'declare_parentheses' => true,
