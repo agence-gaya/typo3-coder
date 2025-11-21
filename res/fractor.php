@@ -9,6 +9,9 @@ $fractorConfigBuilder = FractorConfiguration::configure()
     ->withPaths([
         __DIR__ . '/packages'
     ])
+    ->withSkip([
+        'node_modules/*'
+    ])
     ->withSets([
         Typo3LevelSetList::UP_TO_TYPO3_13,
     ]);

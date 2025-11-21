@@ -15,6 +15,9 @@ $rectorConfigBuilder = RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/packages',
     ])
+    ->withSkip([
+        'node_modules/*'
+    ])
     ->withSets([
         Typo3SetList::CODE_QUALITY,
         Typo3LevelSetList::UP_TO_TYPO3_13,

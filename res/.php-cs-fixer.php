@@ -76,6 +76,7 @@ $config->setRules([
 $config->getFinder()
     ->exclude('.build')
     ->exclude('templates')
+    ->exclude('node_modules')
     ->exclude('tests/Unit/Fixtures')
     ->in(__DIR__ . '/packages');
 
