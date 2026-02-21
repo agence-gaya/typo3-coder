@@ -3,31 +3,32 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
+use Rector\Set\ValueObject\SetList;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
+use Rector\ValueObject\PhpVersion;
 use Ssch\TYPO3Rector\Configuration\Typo3Option;
 use Ssch\TYPO3Rector\Set\Typo3LevelSetList;
 use Ssch\TYPO3Rector\Set\Typo3SetList;
-use Rector\Set\ValueObject\SetList;
+use Ssch\TYPO3Rector\TYPO313\v4\MigratePluginContentElementAndPluginSubtypesRector;
 
 $rectorConfigBuilder = RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/packages',
     ])
     ->withSkip([
-        'node_modules/*'
+        'node_modules/*',
     ])
     ->withSets([
         Typo3SetList::CODE_QUALITY,
-        Typo3LevelSetList::UP_TO_TYPO3_13,
+        Typo3LevelSetList::UP_TO_TYPO3_14,
         SetList::PRIVATIZATION,
         SetList::CODING_STYLE,
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
     ])
     ->withPHPStanConfigs([
-        Typo3Option::PHPSTAN_FOR_RECTOR_PATH
+        Typo3Option::PHPSTAN_FOR_RECTOR_PATH,
     ])
 
     // this will not import root namespace classes, like \DateTime or \Exception
@@ -49,19 +50,19 @@ $rectorConfigBuilder = RectorConfig::configure()
         __DIR__ . '/.Build/*',
 
         // Disable creation of CTypeMigration.php migration file
-        \Ssch\TYPO3Rector\TYPO313\v4\MigratePluginContentElementAndPluginSubtypesRector::class
+        MigratePluginContentElementAndPluginSubtypesRector::class,
     ])
     ->withRules([
         AddVoidReturnTypeWhereNoReturnRector::class,
     ]);
 
 if (file_exists('rector.project.php')) {
-    include_once 'rector.project.php';
+    include_once __DIR__ . '/rector.project.php';
 } else {
     $rectorConfigBuilder
-        ->withPhpVersion(PhpVersion::PHP_83)
+        ->withPhpVersion(PhpVersion::PHP_84)
         ->withSets([
-            LevelSetList::UP_TO_PHP_83,
+            LevelSetList::UP_TO_PHP_84,
         ]);
 }
 

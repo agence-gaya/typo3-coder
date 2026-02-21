@@ -7,17 +7,17 @@ use a9f\Typo3Fractor\Set\Typo3LevelSetList;
 
 $fractorConfigBuilder = FractorConfiguration::configure()
     ->withPaths([
-        __DIR__ . '/packages'
+        __DIR__ . '/packages',
     ])
     ->withSkip([
-        'node_modules/*'
+        'node_modules/*',
     ])
     ->withSets([
-        Typo3LevelSetList::UP_TO_TYPO3_13,
+        Typo3LevelSetList::UP_TO_TYPO3_14,
     ]);
 
 if (file_exists('fractor.project.php')) {
-    include_once 'fractor.project.php';
+    include_once __DIR__ . '/fractor.project.php';
 }
 
 return $fractorConfigBuilder;

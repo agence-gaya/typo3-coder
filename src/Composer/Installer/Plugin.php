@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GAYA\Typo3Coder\Composer\Installer;
 
 use Composer\Composer;
+use Composer\Config;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\Capable;
@@ -12,6 +13,8 @@ use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 use Composer\Util\Filesystem;
+use GAYA\Typo3Coder\Composer\Command\CommandProvider;
+use ReflectionClass;
 
 class Plugin implements PluginInterface, EventSubscriberInterface, Capable
 {
@@ -23,17 +26,17 @@ class Plugin implements PluginInterface, EventSubscriberInterface, Capable
         ];
     }
 
-    public function activate(Composer $composer, IOInterface $io)
+    public function activate(Composer $composer, IOInterface $io): void
     {
         $composer->getEventDispatcher()->addSubscriber($this);
     }
 
-    public function deactivate(Composer $composer, IOInterface $io)
+    public function deactivate(Composer $composer, IOInterface $io): void
     {
         // Nothing to do
     }
 
-    public function uninstall(Composer $composer, IOInterface $io)
+    public function uninstall(Composer $composer, IOInterface $io): void
     {
         $baseDir = $this->extractBaseDir($composer->getConfig());
 
@@ -44,7 +47,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface, Capable
         }
     }
 
-    public function listen(Event $event)
+    public function listen(Event $event): void
     {
         $baseDir = $this->extractBaseDir($event->getComposer()->getConfig());
 
@@ -60,15 +63,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface, Capable
     public function getCapabilities()
     {
         return [
-            'Composer\Plugin\Capability\CommandProvider' => 'GAYA\Typo3Coder\Composer\Command\CommandProvider',
+            'Composer\Plugin\Capability\CommandProvider' => CommandProvider::class,
         ];
     }
 
-    protected function extractBaseDir(\Composer\Config $config)
+    protected function extractBaseDir(Config $config)
     {
-        $reflectionClass = new \ReflectionClass($config);
+        $reflectionClass = new ReflectionClass($config);
         $reflectionProperty = $reflectionClass->getProperty('baseDir');
-        $reflectionProperty->setAccessible(true);
         return $reflectionProperty->getValue($config);
     }
 }

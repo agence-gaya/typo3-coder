@@ -11,7 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GenericCommand extends BaseCommand
 {
     protected string $script;
+
     protected array $arguments;
+
     protected array $ciArguments;
 
     public function setScript(string $script, array $arguments = [], array $ciArguments = []): void
@@ -29,9 +31,9 @@ class GenericCommand extends BaseCommand
         $dispatcher->addListener('__exec_command', $this->script);
 
         if ($input->getOption('continuous-integration')) {
-            $dispatcher->dispatchScript('__exec_command', true, $this->ciArguments);;
+            $dispatcher->dispatchScript('__exec_command', true, $this->ciArguments);
         } else {
-            $dispatcher->dispatchScript('__exec_command', true, $this->arguments);;
+            $dispatcher->dispatchScript('__exec_command', true, $this->arguments);
         }
 
         return 0;
