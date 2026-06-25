@@ -3,7 +3,7 @@
   "description": "Checks TYPO3 code against multiple tools.",
   "type": "composer-plugin",
   "license": "GPL-2.0-or-later",
-  "version": "14.0.0",
+  "version": "14.0.1",
   "require": {
     "composer-plugin-api": "^2.0",
     "typo3/cms-core": "^14.0",
