@@ -60,9 +60,9 @@ if (file_exists('rector.project.php')) {
     include_once __DIR__ . '/rector.project.php';
 } else {
     $rectorConfigBuilder
-        ->withPhpVersion(PhpVersion::PHP_84)
+        ->withPhpVersion(PhpVersion::PHP_85)
         ->withSets([
-            LevelSetList::UP_TO_PHP_84,
+            LevelSetList::UP_TO_PHP_85,
         ]);
 }
 
