@@ -1,3 +1,7 @@
+[![TYPO3 14](https://img.shields.io/badge/TYPO3-14-orange.svg?style=flat-square)](https://get.typo3.org/version/14)
+[![ci](https://github.com/agence-gaya/typo3-coder/actions/workflows/ci.yml/badge.svg)](https://github.com/agence-gaya/typo3-hcaptcha/actions/workflows/ci.yml)
+[![License](https://poser.pugx.org/gaya/typo3-coder/license)](https://packagist.org/packages/gaya/typo3-coder)
+
 # TYPO3 coder
 
 Shared Rector, Fractor, PHP-CS-Fixer, PHPLint, TypoScript lint and PHPUnit configuration for TYPO3 14 projects and standalone extensions.
