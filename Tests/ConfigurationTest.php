@@ -62,6 +62,36 @@ final class ConfigurationTest extends TestCase
         ], $context->phpFiles());
     }
 
+    public function testTypoScriptDiscoveryExcludesDependenciesAndTypeScript(): void
+    {
+        $extension = new ProjectContext($this->root, ['type' => 'typo3-cms-extension']);
+        self::assertSame([], $extension->typoScriptFiles());
+        $included = [
+            'packages/site/Configuration/TypoScript/setup.typoscript',
+            'packages/site/Configuration/TypoScript/legacy.ts',
+            'packages/site/Configuration/TSconfig/Page.tsconfig',
+            'packages/site/Configuration/TypoScript/constants.txt',
+            'packages/site/ext_typoscript_setup.txt',
+        ];
+        $excluded = [
+            'packages/site/Resources/Public/main.ts',
+            'packages/site/README.txt',
+            'packages/site/.build/vendor/setup.typoscript',
+            'packages/site/node_modules/setup.typoscript',
+            'packages/site/vendor/setup.typoscript',
+        ];
+        foreach ([...$included, ...$excluded] as $file) {
+            $path = $this->root . '/' . $file;
+            if (!is_dir(dirname($path))) {
+                mkdir(dirname($path), 0o777, true);
+            }
+            file_put_contents($path, 'page = PAGE');
+        }
+        $expected = array_map($extension->absolute(...), $included);
+        self::assertEqualsCanonicalizing($expected, $extension->typoScriptFiles());
+        self::assertEqualsCanonicalizing($expected, (new ProjectContext($this->root, []))->typoScriptFiles());
+    }
+
     public function testProjectTestPaths(): void
     {
         mkdir($this->root . '/packages/site/Tests/Unit', 0o777, true);

@@ -90,6 +90,20 @@ final class ProjectContext
      */
     public function phpFiles(): array
     {
+        return $this->sourceFiles(['*.php']);
+    }
+
+    public function typoScriptFiles(): array
+    {
+        return array_values(array_filter(
+            $this->sourceFiles(['*.typoscript', '*.tsconfig', 'setup.txt', 'constants.txt', 'ext_typoscript_setup.txt', 'ext_typoscript_constants.txt', '*.ts']),
+            // Legacy .ts files are TypoScript only within the dedicated TYPO3 configuration directories.
+            static fn(string $file): bool => !str_ends_with($file, '.ts') || preg_match('~/Configuration/(TypoScript|TSconfig)/~', $file) === 1,
+        ));
+    }
+
+    private function sourceFiles(array $patterns): array
+    {
         $files = [];
         foreach ($this->paths() as $path) {
             $exclude = ['vendor', 'node_modules', 'NodeModules', 'BowerComponents', 'bower_components', '.build', '.Build', 'Build', 'build', 'var'];
@@ -98,7 +112,7 @@ final class ProjectContext
                     $exclude[] = substr($excluded, strlen($path) + 1);
                 }
             }
-            $finder = (new Finder())->files()->name('*.php')->in($path)->exclude($exclude)->sortByName();
+            $finder = (new Finder())->files()->name($patterns)->in($path)->exclude($exclude)->sortByName();
             foreach ($finder as $file) {
                 $files[] = $file->getPathname();
             }

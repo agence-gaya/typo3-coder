@@ -12,7 +12,8 @@
     "typo3/testing-framework": "^9.3",
     "friendsofphp/php-cs-fixer": "^3.94",
     "a9f/typo3-fractor": "^0.5",
-    "overtrue/phplint": "^9.7"
+    "overtrue/phplint": "^9.7",
+    "helmich/typo3-typoscript-lint": "^3.3"
   },
   "require-dev": {
     "composer/composer": "^2.0",

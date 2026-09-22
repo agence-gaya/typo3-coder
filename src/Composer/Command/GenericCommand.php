@@ -59,6 +59,14 @@ final class GenericCommand extends BaseCommand
             if ($ci) {
                 $arguments[] = '--dry-run';
             }
+        } elseif ($this->tool === 'typoscript-lint') {
+            $files = $context->typoScriptFiles();
+            if ($files === []) {
+                $output->writeln('No TypoScript files found; nothing to run.');
+                return 0;
+            }
+            $arguments = ['--config', $resources . '/tslint.yaml'];
+            array_push($arguments, ...$files);
         } elseif ($this->tool === 'phplint') {
             $arguments = ['--configuration', $resources . '/.phplint.yml'];
             foreach ([...$context->exclusions(), 'vendor', '.build', '.Build', 'Build', 'build', 'var', 'node_modules', 'templates'] as $excluded) {

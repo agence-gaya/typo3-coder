@@ -1,6 +1,6 @@
 # TYPO3 coder
 
-Shared Rector, Fractor, PHP-CS-Fixer, PHPLint and PHPUnit configuration for TYPO3 14 projects and standalone extensions.
+Shared Rector, Fractor, PHP-CS-Fixer, PHPLint, TypoScript lint and PHPUnit configuration for TYPO3 14 projects and standalone extensions.
 
 ## Installation
 
@@ -17,6 +17,7 @@ composer coder:rector
 composer coder:fractor
 composer coder:php-cs-fixer
 composer coder:phplint
+composer coder:typoscript-lint
 composer coder:tests:unit
 composer coder:tests:functional
 ```
@@ -108,6 +109,14 @@ return static function (Config $config): void {
 ```
 
 For IDEs, run the Composer commands with the consumer as working directory. Rector, Fractor and PHP-CS-Fixer can also use the files in this package's `build/` with their `--config` option, provided the consumer autoloader is available and the working directory is the consumer root. Use `coder:phplint` and `coder:tests:*` to resolve their dynamic paths.
+
+## TypoScript lint
+
+`composer coder:typoscript-lint` uses `helmich/typo3-typoscript-lint` with the shared `build/tslint.yaml` shipped in this package. It scans the configured analysis paths with the same dependency/build exclusions as Rector. Supported files are `*.typoscript`, `*.tsconfig`, `setup.txt`, `constants.txt`, `ext_typoscript_setup.txt` and `ext_typoscript_constants.txt`. Legacy `*.ts` files are included only under `Configuration/TypoScript/` or `Configuration/TSconfig/` to avoid treating TypeScript as TypoScript.
+
+The common rules use two spaces per indentation level, indent conditions, and disable `RepeatingRValue`. Errors fail the command; `--continuous-integration` additionally fails on warnings. Projects without TypoScript files succeed with an informational message.
+
+Additional native options can be passed after `--`, for example `--format xml --output build/typoscript-report.xml`. An explicit `--config build/tslint.yaml` replaces the shared YAML with a consumer-owned native configuration; file selection still uses coder's analysis paths. No configuration is copied into the consumer.
 
 ## PHPUnit and TYPO3 functional tests
 
