@@ -18,6 +18,7 @@ composer coder:fractor
 composer coder:php-cs-fixer
 composer coder:phplint
 composer coder:typoscript-lint
+composer coder:yaml-lint
 composer coder:tests:unit
 composer coder:tests:functional
 ```
@@ -117,6 +118,12 @@ For IDEs, run the Composer commands with the consumer as working directory. Rect
 The common rules use two spaces per indentation level, indent conditions, and disable `RepeatingRValue`. Errors fail the command; `--continuous-integration` additionally fails on warnings. Projects without TypoScript files succeed with an informational message.
 
 Additional native options can be passed after `--`, for example `--format xml --output build/typoscript-report.xml`. An explicit `--config build/tslint.yaml` replaces the shared YAML with a consumer-owned native configuration; file selection still uses coder's analysis paths. No configuration is copied into the consumer.
+
+## YAML lint
+
+`composer coder:yaml-lint` uses Symfony's YAML linter to validate `*.yaml` and `*.yml` in the configured analysis paths, with the common dependency/build exclusions. Invalid YAML fails both locally and in CI; no YAML files is a success. No configuration or launcher is copied into the consumer.
+
+Use `composer coder:yaml-lint --continuous-integration` in CI. Native options can be passed after `--`, for example `--format=json` or `--parse-tags` for custom YAML tags.
 
 ## PHPUnit and TYPO3 functional tests
 

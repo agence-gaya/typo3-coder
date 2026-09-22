@@ -102,6 +102,11 @@ final class ProjectContext
         ));
     }
 
+    public function yamlFiles(): array
+    {
+        return $this->sourceFiles(['*.yaml', '*.yml']);
+    }
+
     private function sourceFiles(array $patterns): array
     {
         $files = [];

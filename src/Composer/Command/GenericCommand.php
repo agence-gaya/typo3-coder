@@ -67,6 +67,15 @@ final class GenericCommand extends BaseCommand
             }
             $arguments = ['--config', $resources . '/tslint.yaml'];
             array_push($arguments, ...$files);
+        } elseif ($this->tool === 'yaml-lint') {
+            $arguments = $context->yamlFiles();
+            if ($arguments === []) {
+                $output->writeln('No YAML files found; nothing to run.');
+                return 0;
+            }
+            if ($ci) {
+                $arguments[] = '--no-interaction';
+            }
         } elseif ($this->tool === 'phplint') {
             $arguments = ['--configuration', $resources . '/.phplint.yml'];
             foreach ([...$context->exclusions(), 'vendor', '.build', '.Build', 'Build', 'build', 'var', 'node_modules', 'templates'] as $excluded) {
