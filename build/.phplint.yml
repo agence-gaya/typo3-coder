@@ -1,5 +1,3 @@
 extensions:
   - php
-path:
-  - packages/
 warning: true

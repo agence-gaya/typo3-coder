@@ -1,5 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
+use GAYA\Typo3Coder\Configuration\ProjectContext;
+use GAYA\Typo3Coder\Configuration\Overrides;
+
+$context = ProjectContext::current();
+
 $config = new \PhpCsFixer\Config();
 $config->setRiskyAllowed(true);
 $config->setRules([
@@ -78,10 +85,15 @@ $config->getFinder()
     ->exclude('templates')
     ->exclude('node_modules')
     ->exclude('tests/Unit/Fixtures')
-    ->in(__DIR__ . '/packages');
+    ->in($context->paths());
 
-if (file_exists('.php-cs-fixer.project.php')) {
-    include_once '.php-cs-fixer.project.php';
-}
+$config->getFinder()->filter(static function (\SplFileInfo $file) use ($context): bool {
+    foreach ($context->exclusions() as $excluded) {
+        if (str_starts_with($file->getPathname(), rtrim($excluded, '/') . '/')) {
+            return false;
+        }
+    }
+    return true;
+});
 
-return $config;
+return Overrides::apply('php-cs-fixer', $config, $context);
