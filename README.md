@@ -125,6 +125,12 @@ Additional native options can be passed after `--`, for example `--format xml --
 
 Use `composer coder:yaml-lint --continuous-integration` in CI. Native options can be passed after `--`, for example `--format=json` or `--parse-tags` for custom YAML tags.
 
+## PHPStan
+
+`composer coder:phpstan` use the shared configurations and scan the consumer's PHP source files. PHPStan defaults to level 10 and accepts `extra.gaya/typo3-coder.phpstan-level`; advanced overrides belong in `build/phpstan.neon`.
+
+`composer coder:phpstan:baseline` generate `build/phpstan.baseline.neon` in the consuming project.
+
 ## PHPUnit and TYPO3 functional tests
 
 The package builds a temporary XML with absolute paths, validates it against the installed PHPUnit schema and removes it after execution. It supports the PHPUnit versions allowed by the installed TYPO3 testing framework. No XML is written into your repository or vendor directory.

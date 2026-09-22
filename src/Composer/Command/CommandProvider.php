@@ -11,7 +11,7 @@ final class CommandProvider implements CommandProviderCapability
     public function getCommands(): array
     {
         return array_map(static fn(string $tool): GenericCommand => new GenericCommand($tool), [
-            'rector', 'fractor', 'php-cs-fixer', 'phplint', 'typoscript-lint', 'yaml-lint', 'tests:unit', 'tests:functional', 'migrate',
+            'rector', 'fractor', 'php-cs-fixer', 'phplint', 'typoscript-lint', 'yaml-lint', 'phpstan', 'phpstan:baseline', 'tests:unit', 'tests:functional', 'migrate',
         ]);
     }
 }

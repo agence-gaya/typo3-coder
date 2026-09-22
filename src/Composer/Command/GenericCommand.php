@@ -76,6 +76,15 @@ final class GenericCommand extends BaseCommand
             if ($ci) {
                 $arguments[] = '--no-interaction';
             }
+        } elseif (in_array($this->tool, ['phpstan', 'phpstan:baseline'], true)) {
+            $baseline = $context->absolute('build/phpstan.baseline.neon');
+            $binary = 'phpstan';
+            if (str_ends_with($this->tool, ':baseline')) {
+                $this->ensureBuildDirectory($context);
+                $arguments = ['analyze', '--configuration', $this->temporaryPhpstanConfig($context, $baseline), '--generate-baseline', $baseline, '--allow-empty-baseline'];
+            } else {
+                $arguments = ['analyze', '--configuration', $this->temporaryPhpstanConfig($context, $baseline)];
+            }
         } elseif ($this->tool === 'phplint') {
             $arguments = ['--configuration', $resources . '/.phplint.yml'];
             foreach ([...$context->exclusions(), 'vendor', '.build', '.Build', 'Build', 'build', 'var', 'node_modules', 'templates'] as $excluded) {
@@ -105,5 +114,27 @@ final class GenericCommand extends BaseCommand
                 unlink($temporary);
             }
         }
+    }
+
+    private function ensureBuildDirectory(ProjectContext $context): void
+    {
+        if (!is_dir($context->absolute('build'))) {
+            mkdir($context->absolute('build'), 0775, true);
+        }
+    }
+
+    private function temporaryPhpstanConfig(ProjectContext $context, string $baseline): string
+    {
+        $this->ensureBuildDirectory($context);
+        $includes = [dirname(__DIR__, 3) . '/build/phpstan.neon'];
+        if (is_file($baseline)) {
+            $includes[] = $baseline;
+        }
+        if (is_file($context->absolute('build/phpstan.neon'))) {
+            $includes[] = $context->absolute('build/phpstan.neon');
+        }
+        $file = tempnam(sys_get_temp_dir(), 'coder-phpstan-') . '.neon';
+        file_put_contents($file, "includes:\n    - " . implode("\n    - ", $includes) . "\nparameters:\n    level: " . $context->phpstanLevel() . "\n    paths:\n        - " . implode("\n        - ", $context->phpFiles()) . "\n");
+        return $file;
     }
 }

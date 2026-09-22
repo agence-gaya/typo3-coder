@@ -159,6 +159,11 @@ final class ProjectContext
         return $this->absolute('build/' . $tool . '.php');
     }
 
+    public function phpstanLevel(): int
+    {
+        return (int) ($this->options['phpstan-level'] ?? 10);
+    }
+
     public function phpVersion(): int
     {
         return PHP_MAJOR_VERSION * 10000 + PHP_MINOR_VERSION * 100;
