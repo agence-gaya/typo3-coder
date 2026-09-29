@@ -13,13 +13,22 @@ $context = ProjectContext::current();
 $fractorConfigBuilder = FractorConfiguration::configure()
     ->withPaths($context->paths())
     ->withSkip([
-        '*/node_modules/*',
-        '*/vendor/*',
-        '*/.build/*',
-        '*/.Build/*',
-        '*/Build/*',
-        '*/build/*',
-        '*/var/*',
+        $context->rootDir . '/node_modules/*',
+        $context->rootDir . '/vendor/*',
+        $context->rootDir . '/.build/*',
+        $context->rootDir . '/.Build/*',
+        $context->rootDir . '/Build/*',
+        $context->rootDir . '/build/*',
+        $context->rootDir . '/var/*',
+
+        $context->rootDir . '/*/node_modules/*',
+        $context->rootDir . '/*/vendor/*',
+        $context->rootDir . '/*/.build/*',
+        $context->rootDir . '/*.Build/*',
+        $context->rootDir . '/*/Build/*',
+        $context->rootDir . '/*/build/*',
+        $context->rootDir . '/*/var/*',
+
         ...$context->exclusions(),
     ])
     ->withSets([
@@ -27,3 +36,4 @@ $fractorConfigBuilder = FractorConfiguration::configure()
     ]);
 
 return Overrides::apply('fractor', $fractorConfigBuilder, $context);
+
