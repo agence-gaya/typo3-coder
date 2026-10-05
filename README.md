@@ -1,10 +1,10 @@
 [![TYPO3 14](https://img.shields.io/badge/TYPO3-14-orange.svg?style=flat-square)](https://get.typo3.org/version/14)
-[![ci](https://github.com/agence-gaya/typo3-coder/actions/workflows/ci.yml/badge.svg)](https://github.com/agence-gaya/typo3-hcaptcha/actions/workflows/ci.yml)
+[![ci](https://github.com/agence-gaya/typo3-coder/actions/workflows/ci.yml/badge.svg)](https://github.com/agence-gaya/typo3-coder/actions/workflows/ci.yml)
 [![License](https://poser.pugx.org/gaya/typo3-coder/license)](https://packagist.org/packages/gaya/typo3-coder)
 
 # TYPO3 coder
 
-Shared Rector, Fractor, PHP-CS-Fixer, PHPLint, TypoScript lint and PHPUnit configuration for TYPO3 14 projects and standalone extensions.
+Shared Rector, Fractor, PHP-CS-Fixer, PHPLint, TypoScript lint, YAML lint, PHPStan and PHPUnit configuration for TYPO3 14 projects and standalone extensions.
 
 ## Installation
 
@@ -14,20 +14,26 @@ composer config allow-plugins.gaya/typo3-coder true
 composer config allow-plugins.a9f/fractor-extension-installer true
 ```
 
-Allow the plugins when prompted during installation. Configuration stays in this package: no generated configuration belongs in your project or `.gitignore`. Tool caches may still need to be ignored.
+Allow the plugins when prompted during installation. Shared configuration stays in this package. Optional project customizations and a deliberately generated PHPStan baseline belong in the project's `build/` directory and can be committed. Tool caches may still need to be ignored.
 
-```sh
-composer coder:rector
-composer coder:fractor
-composer coder:php-cs-fixer
-composer coder:phplint
-composer coder:typoscript-lint
-composer coder:yaml-lint
-composer coder:tests:unit
-composer coder:tests:functional
-```
+## Commands
 
-Use `--continuous-integration` (or its alias `--ci`) to check without applying changes. Arguments after `--` go to the tool, for example:
+| Command | Purpose |
+| --- | --- |
+| `composer coder:rector` | Apply Rector refactorings. |
+| `composer coder:fractor` | Apply Fractor refactorings. |
+| `composer coder:php-cs-fixer` | Fix PHP code style. |
+| `composer coder:phplint` | Check PHP syntax. |
+| `composer coder:typoscript-lint` | Lint TypoScript files. |
+| `composer coder:yaml-lint` | Validate YAML files. |
+| `composer coder:phpstan` | Run PHPStan static analysis. |
+| `composer coder:tests:unit` | Run unit tests. |
+| `composer coder:tests:functional` | Run TYPO3 functional tests. |
+| `composer coder:all` | Run the nine tools and test suites above in order. |
+| `composer coder:phpstan:baseline` | Generate or update the project's PHPStan baseline. |
+| `composer coder:migrate` | Migrate legacy coder configuration. |
+
+Use `--continuous-integration` (or its alias `--ci`) to check without applying Rector, Fractor or PHP-CS-Fixer corrections. This option does not prevent an explicitly requested migration or PHPStan baseline generation, including within a custom group. Arguments after `--` go to the individual tool, for example:
 
 ```sh
 composer coder:rector --continuous-integration -- --no-progress-bar
@@ -91,6 +97,7 @@ Optional overrides in `composer.json`:
       "profile": "extension",
       "paths": ["Classes", "Configuration", "Tests"],
       "exclude": ["Tests/Fixtures"],
+      "phpstan-level": 10,
       "tests": {
         "unit": ["Tests/Unit"],
         "functional": ["Tests/Functional"]
@@ -100,7 +107,7 @@ Optional overrides in `composer.json`:
 }
 ```
 
-Only include settings you need. Rector always targets the running PHP major/minor version. For a reusable extension, run Rector only in the CI job using its minimum supported PHP version; keep tests and lint on the full PHP matrix. For exemple, the Rector step is restricted to PHP 8.2:
+Only include settings you need. Rector always targets the running PHP major/minor version. For a reusable extension, run Rector only in the CI job using its minimum supported PHP version; keep tests and lint on the full PHP matrix. For example, the Rector step is restricted to PHP 8.2:
 
 ```yaml
 - name: Rector
@@ -148,7 +155,7 @@ For IDEs, run the Composer commands with the consumer as working directory. Rect
 
 `composer coder:typoscript-lint` uses `helmich/typo3-typoscript-lint` with the shared `build/tslint.yaml` shipped in this package. It scans the configured analysis paths with the same dependency/build exclusions as Rector. Supported files are `*.typoscript`, `*.tsconfig`, `setup.txt`, `constants.txt`, `ext_typoscript_setup.txt` and `ext_typoscript_constants.txt`. Legacy `*.ts` files are included only under `Configuration/TypoScript/` or `Configuration/TSconfig/` to avoid treating TypeScript as TypoScript.
 
-The common rules use two spaces per indentation level, indent conditions, and disable `RepeatingRValue`. Errors fail the command; `--continuous-integration` additionally fails on warnings. Projects without TypoScript files succeed with an informational message.
+The common rules use two spaces per indentation level, indent conditions, and disable `RepeatingRValue`. Errors fail the command. `--ci` and `--continuous-integration` do not change the TypoScript linter's warning handling; use `composer coder:typoscript-lint -- --fail-on-warnings` to fail on warnings as well. Projects without TypoScript files succeed with an informational message.
 
 Additional native options can be passed after `--`, for example `--format xml --output build/typoscript-report.xml`. An explicit `--config build/tslint.yaml` replaces the shared YAML with a consumer-owned native configuration; file selection still uses coder's analysis paths. No configuration is copied into the consumer.
 
@@ -160,9 +167,17 @@ Use `composer coder:yaml-lint --continuous-integration` in CI. Native options ca
 
 ## PHPStan
 
-`composer coder:phpstan` use the shared configurations and scan the consumer's PHP source files. PHPStan defaults to level 10 and accepts `extra.gaya/typo3-coder.phpstan-level`; advanced overrides belong in `build/phpstan.neon`.
+`composer coder:phpstan` uses the shared configuration and scans the consumer's PHP source files, using the configured analysis paths and exclusions. PHPStan defaults to level 10. Set `extra.gaya/typo3-coder.phpstan-level` in `composer.json` to select another level, as shown in the project context example above.
 
-`composer coder:phpstan:baseline` generate `build/phpstan.baseline.neon` in the consuming project.
+Optional `build/phpstan.neon` is included automatically for additional PHPStan configuration. The generated configuration sets the level and analysis paths from coder's project context; configure these through `composer.json`.
+
+```sh
+composer coder:phpstan
+composer coder:phpstan -- --error-format=table
+composer coder:phpstan:baseline
+```
+
+`composer coder:phpstan:baseline` generates or updates `build/phpstan.baseline.neon` in the consuming project. When present, this baseline is included automatically in subsequent PHPStan runs. Commit it if the project uses a baseline to track existing issues. Baseline generation is an explicit operation and still writes the file when `--ci` or `--continuous-integration` is supplied; it is excluded from `coder:all`.
 
 ## PHPUnit and TYPO3 functional tests
 
