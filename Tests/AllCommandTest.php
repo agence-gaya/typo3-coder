@@ -10,6 +10,8 @@ use Composer\EventDispatcher\EventDispatcher;
 use Composer\IO\NullIO;
 use Composer\Package\RootPackage;
 use GAYA\Typo3Coder\Composer\Command\AllCommand;
+use GAYA\Typo3Coder\Composer\Command\CommandGroup;
+use GAYA\Typo3Coder\Composer\Command\CommandProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
@@ -76,7 +78,31 @@ final class AllCommandTest extends TestCase
         $command->run(new ArgvInput(['composer', 'coder:all', '--', '--filter', 'MyTest']), new BufferedOutput());
     }
 
-    private function createCommand(array &$calls, array $results = []): AllCommand
+    public function testConfiguredGroupsUseSharedExecution(): void
+    {
+        $composer = new Composer();
+        $package = new RootPackage('gaya/consumer', '1.0.0.0', '1.0.0');
+        $package->setExtra(['gaya/typo3-coder' => ['command' => [
+            'run' => ['fractor', 'rector'],
+            'checks' => ['phpstan', 'tests:unit'],
+        ]]]);
+        $composer->setPackage($package);
+        $groups = array_slice((new CommandProvider(['composer' => $composer]))->getCommands(), 12);
+        foreach ($groups as $group) {
+            foreach ([[], ['--ci' => true], ['--continuous-integration' => true], ['--ci' => true, '--continuous-integration' => true]] as $options) {
+                $calls = [];
+                $expected = $group->getName() === 'coder:run' ? ['coder:fractor', 'coder:rector'] : ['coder:phpstan', 'coder:tests:unit'];
+                $tester = new CommandTester($this->createCommand($calls, [$expected[0] => 7], $group));
+                self::assertSame(1, $tester->execute($options));
+                self::assertSame($expected, array_column($calls, 'name'));
+                self::assertSame(array_fill(0, 2, $options !== []), array_column($calls, 'ci'));
+                self::assertStringContainsString($expected[0] . ': FAILED (exit 7)', $tester->getDisplay());
+                self::assertStringContainsString($expected[1] . ': OK', $tester->getDisplay());
+            }
+        }
+    }
+
+    private function createCommand(array &$calls, array $results = [], ?CommandGroup $command = null): CommandGroup
     {
         $application = new Application();
         foreach ([...self::COMMANDS, 'coder:migrate', 'coder:phpstan:baseline'] as $name) {
@@ -100,7 +126,7 @@ final class AllCommandTest extends TestCase
         $composer = new Composer();
         $composer->setPackage(new RootPackage('gaya/test', '1.0.0.0', '1.0.0'));
         $composer->setEventDispatcher(new EventDispatcher($composer, new NullIO()));
-        $command = new AllCommand();
+        $command ??= new AllCommand();
         $command->setComposer($composer);
         $command->setIO(new NullIO());
         $application->add($command);

@@ -40,6 +40,33 @@ Run all tools and both test suites with `composer coder:all`, or use `composer c
 
 A coverage driver (Xdebug or PCOV) must be enabled to collect coverage. Tool exit codes are preserved. Missing conventional test directories and empty test suites are successful, including in CI. Explicitly configured missing directories, bootstrap errors and failing tests remain errors.
 
+## Custom command groups
+
+Declare groups in the consuming project's root `composer.json`:
+
+```json
+{
+  "extra": {
+    "gaya/typo3-coder": {
+      "command": {
+        "run": ["rector", "fractor"],
+        "checks": ["phplint", "phpstan", "tests:unit"]
+      }
+    }
+  }
+}
+```
+
+```sh
+composer coder:run
+composer coder:checks --ci
+composer coder:run --continuous-integration
+```
+
+Groups run commands in the declared order, apply corrections by default, and forward either CI option to every command. As with `coder:all`, execution continues after failures, prints a final summary, and returns `0` on success or `1` if any command failed. Global Composer options are supported; tool-specific arguments after `--` are not.
+
+Group names must match `[a-z][a-z0-9-]*` and cannot replace built-in commands, including `all`. Each group must contain a non-empty list of distinct built-in tool names without the `coder:` prefix. `migrate` and `phpstan:baseline` may be included explicitly. References to other groups, `all`, external Composer commands, and shell commands are not supported. Invalid configuration produces an error identifying the configuration key. Omitting `command` or setting it to `{}` adds no groups.
+
 ## Project context
 
 The root Composer package determines the profile: `typo3-cms-extension` selects **extension**, other types select **project**. Dependencies' `require-dev` entries do not install coder: require it in the Composer root where commands run.
