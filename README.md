@@ -27,7 +27,7 @@ composer coder:tests:unit
 composer coder:tests:functional
 ```
 
-Use `--continuous-integration` to check without applying changes. Arguments after `--` go to the tool, for example:
+Use `--continuous-integration` (or its alias `--ci`) to check without applying changes. Arguments after `--` go to the tool, for example:
 
 ```sh
 composer coder:rector --continuous-integration -- --no-progress-bar
