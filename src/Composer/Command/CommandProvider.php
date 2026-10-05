@@ -22,6 +22,7 @@ final class CommandProvider implements CommandProviderCapability
             new UnitTestsCommand(),
             new FunctionalTestsCommand(),
             new MigrateCommand(),
+            new AllCommand(),
         ];
     }
 }

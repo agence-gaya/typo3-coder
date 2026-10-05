@@ -22,9 +22,9 @@ final class CommandTest extends TestCase
         self::assertSame([
             'coder:rector', 'coder:fractor', 'coder:php-cs-fixer', 'coder:phplint',
             'coder:typoscript-lint', 'coder:yaml-lint', 'coder:phpstan',
-            'coder:phpstan:baseline', 'coder:tests:unit', 'coder:tests:functional', 'coder:migrate',
+            'coder:phpstan:baseline', 'coder:tests:unit', 'coder:tests:functional', 'coder:migrate', 'coder:all',
         ], array_map(static fn($command) => $command->getName(), $commands));
-        self::assertCount(11, array_unique(array_map(static fn($command) => $command::class, $commands)));
+        self::assertCount(12, array_unique(array_map(static fn($command) => $command::class, $commands)));
 
         $root = sys_get_temp_dir() . '/coder commands ' . bin2hex(random_bytes(6));
         mkdir($root);

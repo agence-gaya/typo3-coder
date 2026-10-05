@@ -36,6 +36,8 @@ XDEBUG_MODE=coverage composer coder:tests:unit -- --coverage-clover .build/logs/
 composer --working-dir=path/to/extension coder:phplint
 ```
 
+Run all tools and both test suites with `composer coder:all`, or use `composer coder:all --ci` (equivalently `--continuous-integration`) to check without applying corrections. The execution order is Rector, Fractor, PHP-CS-Fixer, PHPLint, TypoScript lint, YAML lint, PHPStan, unit tests, then functional tests. Migration and PHPStan baseline generation are excluded. Failures do not stop the remaining commands: a final summary reports each result, and the command returns `1` if any command failed, otherwise `0`. Tool-specific arguments after `--` are not supported by `coder:all`; use the individual commands for those arguments.
+
 A coverage driver (Xdebug or PCOV) must be enabled to collect coverage. Tool exit codes are preserved. Missing conventional test directories and empty test suites are successful, including in CI. Explicitly configured missing directories, bootstrap errors and failing tests remain errors.
 
 ## Project context
