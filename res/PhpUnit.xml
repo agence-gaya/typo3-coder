@@ -17,7 +17,7 @@
         requireCoverageMetadata="false">
     <testsuites>
         <testsuite name="site tests">
-            <directory>../../packages/site*/Tests/Unit/</directory>
+            <directory>../../packages/*/Tests/Unit/</directory>
         </testsuite>
     </testsuites>
     <php>
