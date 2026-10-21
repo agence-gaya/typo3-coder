@@ -80,8 +80,8 @@ The root Composer package determines the profile: `typo3-cms-extension` selects 
 | Setting | Project default | Extension default |
 | --- | --- | --- |
 | Analysis paths | `packages/` | `.` |
-| Unit tests | `packages/site*/Tests/Unit` | `Tests/Unit` |
-| Functional tests | `packages/site*/Tests/Functional` | `Tests/Functional` |
+| Unit tests | `packages/*/Tests/Unit` | `Tests/Unit` |
+| Functional tests | `packages/*/Tests/Functional` | `Tests/Functional` |
 | Vendor/binaries | Composer `vendor-dir` / `bin-dir` | Same, including `.build/vendor` / `.build/bin` |
 | Web root | `extra.typo3/cms.web-dir`, otherwise `public` | Same |
 | Rector PHP target | Current PHP major/minor | Current PHP major/minor |

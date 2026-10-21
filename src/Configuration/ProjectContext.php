@@ -129,7 +129,7 @@ final class ProjectContext
     {
         $configured = $this->options['tests'][$suite] ?? null;
         $suffix = $suite === 'unit' ? 'Unit' : 'Functional';
-        return $this->existingDirectories($configured ?? [$this->profile === 'extension' ? 'Tests/' . $suffix : 'packages/site*/Tests/' . $suffix], $configured !== null);
+        return $this->existingDirectories($configured ?? [$this->profile === 'extension' ? 'Tests/' . $suffix : 'packages/*/Tests/' . $suffix], $configured !== null);
     }
 
     private function existingDirectories(array $patterns, bool $required): array
