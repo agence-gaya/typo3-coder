@@ -49,6 +49,15 @@ final class ConfigurationTest extends TestCase
         self::assertSame([], $context->testPaths('functional'));
     }
 
+    public function testSharedConfigurationIsNotAppliedAsItsOwnOverride(): void
+    {
+        $context = new ProjectContext(dirname(__DIR__), []);
+        $configuration = new stdClass();
+        foreach (['rector', 'fractor'] as $tool) {
+            self::assertSame($configuration, Overrides::apply($tool, $configuration, $context));
+        }
+    }
+
     public function testRectorFilesExcludeNestedBuildAndCustomVendorDirectories(): void
     {
         foreach (['Classes', '.build/packages', 'deps', 'packages/example/.build', 'packages/example/Classes', 'node_modules'] as $directory) {

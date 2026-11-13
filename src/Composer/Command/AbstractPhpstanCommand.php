@@ -22,7 +22,8 @@ abstract class AbstractPhpstanCommand extends AbstractCommand
         if (is_file($baseline)) {
             $includes[] = $baseline;
         }
-        if (is_file($context->absolute('build/phpstan.neon'))) {
+        if (is_file($context->absolute('build/phpstan.neon'))
+            && realpath($context->absolute('build/phpstan.neon')) !== realpath($includes[0])) {
             $includes[] = $context->absolute('build/phpstan.neon');
         }
         $file = tempnam(sys_get_temp_dir(), 'coder-phpstan-') . '.neon';

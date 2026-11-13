@@ -12,7 +12,8 @@ final class Overrides
     public static function apply(string $tool, object $configuration, ProjectContext $context): object
     {
         $file = $context->overrideFile($tool);
-        if (!is_file($file)) {
+        // When coder is the root package, its shared configuration is not an override.
+        if (!is_file($file) || realpath($file) === realpath(__DIR__ . '/../../build/' . $tool . '.php')) {
             return $configuration;
         }
         // Preserve the variable scope of the historical project.php files.
