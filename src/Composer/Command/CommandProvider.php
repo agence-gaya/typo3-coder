@@ -37,8 +37,8 @@ class CommandProvider implements CommandProviderCapability
         'coder:phplint' => [
             'binary' => 'phplint',
             'description' => 'Run phplint',
-            'arguments' => [],
-            'ci-arguments' => ['--no-interaction', '--ansi'],
+            'arguments' => ['lint'],
+            'ci-arguments' => ['lint', '--no-interaction', '--ansi'],
         ],
     ];
 
