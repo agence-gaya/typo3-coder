@@ -97,7 +97,7 @@ Optional overrides in `composer.json`:
       "profile": "extension",
       "paths": ["Classes", "Configuration", "Tests"],
       "exclude": ["Tests/Fixtures"],
-      "phpstan-level": 10,
+      "phpstan-level": 5,
       "tests": {
         "unit": ["Tests/Unit"],
         "functional": ["Tests/Functional"]
@@ -167,7 +167,7 @@ Use `composer coder:yaml-lint --continuous-integration` in CI. Native options ca
 
 ## PHPStan
 
-`composer coder:phpstan` uses the shared configuration and scans the consumer's PHP source files, using the configured analysis paths and exclusions. PHPStan defaults to level 10. Set `extra.gaya/typo3-coder.phpstan-level` in `composer.json` to select another level, as shown in the project context example above.
+`composer coder:phpstan` uses the shared configuration and scans the consumer's PHP source files, using the configured analysis paths and exclusions. PHPStan defaults to level 5. Set `extra.gaya/typo3-coder.phpstan-level` in `composer.json` to select another level, as shown in the project context example above.
 
 Optional `build/phpstan.neon` is included automatically for additional PHPStan configuration. The generated configuration sets the level and analysis paths from coder's project context; configure these through `composer.json`.
 
