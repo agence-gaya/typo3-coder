@@ -17,7 +17,7 @@ final class PhpLintCommand extends AbstractCommand
 
     protected function executeTool(ProjectContext $context, InputInterface $input, OutputInterface $output): int
     {
-        $arguments = ['--configuration', $this->resources() . '/.phplint.yml'];
+        $arguments = ['lint', '--configuration', $this->resources() . '/.phplint.yml'];
         foreach ([...$context->exclusions(), 'vendor', '.build', '.Build', 'Build', 'build', 'var', 'node_modules', 'templates'] as $excluded) {
             // PHPLint's Finder expects exclusions relative to each search directory.
             foreach ($context->paths() as $path) {

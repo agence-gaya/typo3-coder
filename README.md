@@ -245,7 +245,9 @@ The previously documented `.rector.php` name was a documentation error. It is ne
 
 ```sh
 composer install
-vendor/bin/phpunit -c Tests/phpunit.xml
+composer coder:all
 ```
+
+Composer does not activate the root package as a plugin. This repository declares the built-in `coder:*` commands as Composer scripts using the same command classes (Composer 2.5+). They target `src/` and `Tests/`, and the unit suite runs `Tests/`. Shared Rector, Fractor and PHPStan configuration is not loaded again as a project override when coder itself is the root package. Custom command groups still require the plugin to be installed as a dependency.
 
 Publish coder package first on GitHub/Packagist, then update the consuming projects' lock files. Local verification can use a temporary Composer manifest with a path repository; do not commit that repository to consumers.

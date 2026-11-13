@@ -54,6 +54,9 @@ final class CommandTest extends TestCase
                     if (in_array($tool, ['phplint', 'yaml-lint'], true)) {
                         self::assertSame($options !== [], in_array('--no-interaction', $arguments, true));
                     }
+                    if ($tool === 'phplint') {
+                        self::assertSame('lint', $arguments[0]);
+                    }
                     if ($binary === 'phpstan') {
                         self::assertSame('analyze', $arguments[0]);
                         self::assertSame($tool === 'phpstan:baseline', in_array('--generate-baseline', $arguments, true));
