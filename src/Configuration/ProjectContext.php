@@ -161,7 +161,7 @@ final class ProjectContext
 
     public function phpstanLevel(): int
     {
-        return (int) ($this->options['phpstan-level'] ?? 10);
+        return (int) ($this->options['phpstan-level'] ?? 5);
     }
 
     public function phpVersion(): int
