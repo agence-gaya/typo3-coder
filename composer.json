@@ -18,11 +18,29 @@
     "saschaegerer/phpstan-typo3": "^3.1"
   },
   "require-dev": {
-    "composer/composer": "^2.0",
+    "composer/composer": "^2.5",
     "phpunit/phpunit": "^11.5 || ^12.1 || ^13.0"
   },
   "extra": {
-    "class": "GAYA\\Typo3Coder\\Composer\\Installer\\Plugin"
+    "class": "GAYA\\Typo3Coder\\Composer\\Installer\\Plugin",
+    "gaya/typo3-coder": {
+      "paths": ["src", "Tests"],
+      "tests": {
+        "unit": ["Tests"]
+      }
+    }
+  },
+  "scripts": {
+    "coder:rector": "GAYA\\Typo3Coder\\Composer\\Command\\RectorCommand",
+    "coder:fractor": "GAYA\\Typo3Coder\\Composer\\Command\\FractorCommand",
+    "coder:php-cs-fixer": "GAYA\\Typo3Coder\\Composer\\Command\\PhpCsFixerCommand",
+    "coder:phplint": "GAYA\\Typo3Coder\\Composer\\Command\\PhpLintCommand",
+    "coder:yaml-lint": "GAYA\\Typo3Coder\\Composer\\Command\\YamlLintCommand",
+    "coder:phpstan": "GAYA\\Typo3Coder\\Composer\\Command\\PhpstanCommand",
+    "coder:phpstan:baseline": "GAYA\\Typo3Coder\\Composer\\Command\\PhpstanBaselineCommand",
+    "coder:tests:unit": "GAYA\\Typo3Coder\\Composer\\Command\\UnitTestsCommand",
+    "coder:tests:functional": "GAYA\\Typo3Coder\\Composer\\Command\\FunctionalTestsCommand",
+    "coder:all": "GAYA\\Typo3Coder\\Composer\\Command\\AllCommand"
   },
   "autoload": {
     "psr-4": {
