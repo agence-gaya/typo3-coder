@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace GAYA\Typo3Coder\Configuration;
 
-use Closure;
-use UnexpectedValueException;
-
 final class Overrides
 {
     public static function apply(string $tool, object $configuration, ProjectContext $context): object
@@ -16,10 +13,13 @@ final class Overrides
         if (!is_file($file) || realpath($file) === realpath(__DIR__ . '/../../build/' . $tool . '.php')) {
             return $configuration;
         }
+
         // Preserve the variable scope of the historical project.php files.
-        $config = $rectorConfigBuilder = $fractorConfigBuilder = $configuration;
+        $config = $configuration;
+        $rectorConfigBuilder = $configuration;
+        $fractorConfigBuilder = $configuration;
         $result = require $file;
-        if ($result instanceof Closure) {
+        if ($result instanceof \Closure) {
             $result = $result($configuration, $context);
             if ($result === null) {
                 return $configuration;
@@ -31,9 +31,11 @@ final class Overrides
                 default => $config,
             };
         }
+
         if (!$result instanceof ($configuration::class)) {
-            throw new UnexpectedValueException('Invalid configuration returned by ' . $file);
+            throw new \UnexpectedValueException('Invalid configuration returned by ' . $file, 7435961923);
         }
+
         return $result;
     }
 }

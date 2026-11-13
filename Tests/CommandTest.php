@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace GAYA\Typo3Coder\Tests;
 
-use FilesystemIterator;
 use GAYA\Typo3Coder\Composer\Command\CommandProvider;
 use GAYA\Typo3Coder\Configuration\ProjectContext;
 use PHPUnit\Framework\TestCase;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use ReflectionMethod;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -41,7 +37,7 @@ final class CommandTest extends TestCase
                 foreach ([[], ['--continuous-integration'], ['--ci'], ['--continuous-integration', '--ci']] as $options) {
                     $input = new ArgvInput(['coder', ...$options, '--', '--example', 'a b'], $command->getDefinition());
                     $output = new BufferedOutput();
-                    $status = (new ReflectionMethod($command, 'executeTool'))->invoke($command, $context, $input, $output);
+                    $status = (new \ReflectionMethod($command, 'executeTool'))->invoke($command, $context, $input, $output);
                     self::assertSame(7, $status);
                     [$arguments, $cwd, $environment] = json_decode($output->fetch(), true, 512, JSON_THROW_ON_ERROR);
                     self::assertSame($root, $cwd);
@@ -51,12 +47,15 @@ final class CommandTest extends TestCase
                         self::assertSame($options !== [], in_array('--dry-run', $arguments, true));
                         self::assertSame($tool === 'php-cs-fixer' ? 'fix' : 'process', $arguments[0]);
                     }
+
                     if (in_array($tool, ['phplint', 'yaml-lint'], true)) {
                         self::assertSame($options !== [], in_array('--no-interaction', $arguments, true));
                     }
+
                     if ($tool === 'phplint') {
                         self::assertSame('lint', $arguments[0]);
                     }
+
                     if ($binary === 'phpstan') {
                         self::assertSame('analyze', $arguments[0]);
                         self::assertSame($tool === 'phpstan:baseline', in_array('--generate-baseline', $arguments, true));
@@ -66,17 +65,19 @@ final class CommandTest extends TestCase
                     }
                 }
             }
+
             foreach (array_slice($commands, 8, 2) as $command) {
                 $input = new ArgvInput(['coder', '--ci'], $command->getDefinition());
                 $output = new BufferedOutput();
-                self::assertSame(0, (new ReflectionMethod($command, 'executeTool'))->invoke($command, $context, $input, $output));
+                self::assertSame(0, (new \ReflectionMethod($command, 'executeTool'))->invoke($command, $context, $input, $output));
                 self::assertStringContainsString('tests found; nothing to run.', $output->fetch());
             }
         } finally {
-            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
             foreach ($files as $file) {
                 $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
             }
+
             rmdir($root);
         }
     }

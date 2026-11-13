@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Process\Process;
+
 // Run with: php Tests/typoscript-smoke.php /path/to/composer /path/to/consumer/vendor [/path/to/linter/bin]
 $composer = $argv[1];
 $vendor = realpath($argv[2]);
@@ -20,11 +22,13 @@ $run = static function (bool $ci, int $expected) use ($root, $composer): void {
     if ($ci) {
         $arguments[] = '--continuous-integration';
     }
-    $process = new Symfony\Component\Process\Process($arguments, null, ['COMPOSER' => false]);
+
+    $process = new Process($arguments, null, ['COMPOSER' => false]);
     $process->setTimeout(60);
+
     $status = $process->run();
     if ($status !== $expected) {
-        throw new RuntimeException('Expected ' . $expected . ', got ' . $status . "\n" . $process->getOutput() . $process->getErrorOutput());
+        throw new RuntimeException('Expected ' . $expected . ', got ' . $status . "\n" . $process->getOutput() . $process->getErrorOutput(), 5091942085);
     }
 };
 try {
@@ -49,5 +53,6 @@ try {
     foreach ($files as $file) {
         $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
     }
+
     rmdir($root);
 }

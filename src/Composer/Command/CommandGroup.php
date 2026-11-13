@@ -10,11 +10,12 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
 
 class CommandGroup extends BaseCommand
 {
-    /** @param list<string> $commands Fully qualified command names. */
+    /**
+     * @param list<string> $commands Fully qualified command names.
+     */
     public function __construct(string $name, string $description, private readonly array $commands)
     {
         parent::__construct($name);
@@ -32,6 +33,7 @@ class CommandGroup extends BaseCommand
                 $options['--' . $name] = $input->getOption($name);
             }
         }
+
         if ($input->getOption('ci') || $input->getOption('continuous-integration')) {
             $options['--continuous-integration'] = true;
         }
@@ -43,7 +45,7 @@ class CommandGroup extends BaseCommand
                 $commandInput = new ArrayInput(['command' => $name, ...$options]);
                 $commandInput->setInteractive($input->isInteractive());
                 $results[$name] = $application->find($name)->run($commandInput, $output);
-            } catch (Throwable $exception) {
+            } catch (\Throwable $exception) {
                 $output->writeln('<error>' . OutputFormatter::escape($exception->getMessage()) . '</error>');
                 $results[$name] = self::FAILURE;
             }

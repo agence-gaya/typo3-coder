@@ -6,11 +6,10 @@ namespace GAYA\Typo3Coder\Composer\Command;
 
 use Composer\Composer;
 use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
-use InvalidArgumentException;
 
-final class CommandProvider implements CommandProviderCapability
+final readonly class CommandProvider implements CommandProviderCapability
 {
-    private readonly ?Composer $composer;
+    private ?Composer $composer;
 
     public function __construct(array $arguments = [])
     {
@@ -37,39 +36,48 @@ final class CommandProvider implements CommandProviderCapability
         $extra = $this->composer?->getPackage()->getExtra() ?? [];
         $config = $extra['gaya/typo3-coder'] ?? [];
         if (!is_array($config)) {
-            throw new InvalidArgumentException('extra.gaya/typo3-coder must be an object.');
+            throw new \InvalidArgumentException('extra.gaya/typo3-coder must be an object.', 2753211872);
         }
+
         if (!array_key_exists('command', $config)) {
             return $commands;
         }
+
         $groups = $config['command'];
         $path = 'extra.gaya/typo3-coder.command';
         if (!is_array($groups) || ($groups !== [] && array_is_list($groups))) {
-            throw new InvalidArgumentException($path . ' must be an object mapping names to command lists.');
+            throw new \InvalidArgumentException($path . ' must be an object mapping names to command lists.', 2923408405);
         }
+
         $reserved = array_map(static fn($command): string => substr($command->getName(), 6), $commands);
         $tools = array_values(array_diff($reserved, ['all']));
         foreach ($groups as $name => $members) {
             $groupPath = $path . '.' . $name;
             if (!is_string($name) || preg_match('/\A[a-z][a-z0-9-]*\z/', $name) !== 1) {
-                throw new InvalidArgumentException($groupPath . ': group names must match [a-z][a-z0-9-]*.');
+                throw new \InvalidArgumentException($groupPath . ': group names must match [a-z][a-z0-9-]*.', 3543218520);
             }
+
             if (in_array($name, $reserved, true)) {
-                throw new InvalidArgumentException($groupPath . ': this command name is reserved.');
+                throw new \InvalidArgumentException($groupPath . ': this command name is reserved.', 2684401900);
             }
+
             if (!is_array($members) || !array_is_list($members) || $members === []) {
-                throw new InvalidArgumentException($groupPath . ' must be a non-empty list of command names.');
+                throw new \InvalidArgumentException($groupPath . ' must be a non-empty list of command names.', 3268087903);
             }
+
             $qualified = [];
             foreach ($members as $index => $member) {
                 if (!is_string($member) || !in_array($member, $tools, true)) {
-                    throw new InvalidArgumentException($groupPath . '.' . $index . ': expected a built-in tool name without the coder: prefix.');
+                    throw new \InvalidArgumentException($groupPath . '.' . $index . ': expected a built-in tool name without the coder: prefix.', 3161820965);
                 }
+
                 if (in_array('coder:' . $member, $qualified, true)) {
-                    throw new InvalidArgumentException($groupPath . '.' . $index . ': duplicate command ' . $member . '.');
+                    throw new \InvalidArgumentException($groupPath . '.' . $index . ': duplicate command ' . $member . '.', 4955576415);
                 }
+
                 $qualified[] = 'coder:' . $member;
             }
+
             $commands[] = new CommandGroup('coder:' . $name, 'Run configured command group ' . $name, $qualified);
         }
 

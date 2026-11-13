@@ -13,7 +13,6 @@ use GAYA\Typo3Coder\Composer\Command\AllCommand;
 use GAYA\Typo3Coder\Composer\Command\CommandGroup;
 use GAYA\Typo3Coder\Composer\Command\CommandProvider;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException as InputException;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -51,7 +50,7 @@ final class AllCommandTest extends TestCase
         $calls = [];
         $tester = new CommandTester($this->createCommand($calls, [
             'coder:rector' => 7,
-            'coder:yaml-lint' => new RuntimeException('Tool failed'),
+            'coder:yaml-lint' => new \RuntimeException('Tool failed'),
         ]));
         self::assertSame(1, $tester->execute([]));
         self::assertSame(self::COMMANDS, array_column($calls, 'name'));
@@ -89,6 +88,7 @@ final class AllCommandTest extends TestCase
         $composer->setPackage($package);
         $groups = array_slice((new CommandProvider(['composer' => $composer]))->getCommands(), 12);
         foreach ($groups as $group) {
+            self::assertInstanceOf(CommandGroup::class, $group);
             foreach ([[], ['--ci' => true], ['--continuous-integration' => true], ['--ci' => true, '--continuous-integration' => true]] as $options) {
                 $calls = [];
                 $expected = $group->getName() === 'coder:run' ? ['coder:fractor', 'coder:rector'] : ['coder:phpstan', 'coder:tests:unit'];
@@ -116,19 +116,22 @@ final class AllCommandTest extends TestCase
                     'no-plugins' => $input->getOption('no-plugins'),
                 ];
                 $result = $results[$name] ?? 0;
-                if ($result instanceof RuntimeException) {
+                if ($result instanceof \RuntimeException) {
                     throw $result;
                 }
+
                 return $result;
             });
             $application->add($child);
         }
+
         $composer = new Composer();
         $composer->setPackage(new RootPackage('gaya/test', '1.0.0.0', '1.0.0'));
         $composer->setEventDispatcher(new EventDispatcher($composer, new NullIO()));
         $command ??= new AllCommand();
         $command->setComposer($composer);
         $command->setIO(new NullIO());
+
         $application->add($command);
         return $command;
     }

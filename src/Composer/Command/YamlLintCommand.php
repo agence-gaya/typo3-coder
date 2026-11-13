@@ -22,9 +22,11 @@ final class YamlLintCommand extends AbstractCommand
             $output->writeln('No YAML files found; nothing to run.');
             return 0;
         }
+
         if ($this->isContinuousIntegration($input)) {
             $arguments[] = '--no-interaction';
         }
+
         return $this->runTool($context, $input, $output, 'yaml-lint', $arguments);
     }
 }
