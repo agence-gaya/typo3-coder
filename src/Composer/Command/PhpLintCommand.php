@@ -22,12 +22,15 @@ final class PhpLintCommand extends AbstractCommand
             // PHPLint's Finder expects exclusions relative to each search directory.
             foreach ($context->paths() as $path) {
                 $relative = str_starts_with($excluded, rtrim($path, '/') . '/') ? substr($excluded, strlen(rtrim($path, '/')) + 1) : $excluded;
-                array_push($arguments, '--exclude', $relative);
+                $arguments[] = '--exclude';
+                $arguments[] = $relative;
             }
         }
+
         if ($this->isContinuousIntegration($input)) {
             $arguments[] = '--no-interaction';
         }
+
         array_push($arguments, ...$context->paths());
         return $this->runTool($context, $input, $output, 'phplint', $arguments);
     }

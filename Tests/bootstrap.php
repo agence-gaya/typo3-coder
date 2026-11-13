@@ -8,6 +8,7 @@ foreach ([__DIR__ . '/../vendor/autoload.php', dirname(__DIR__, 3) . '/autoload.
         break;
     }
 }
+
 spl_autoload_register(static function (string $class): void {
     $prefix = 'GAYA\\Typo3Coder\\';
     if (str_starts_with($class, $prefix)) {

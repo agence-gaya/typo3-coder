@@ -7,7 +7,6 @@ namespace GAYA\Typo3Coder\Tests;
 use Composer\Composer;
 use Composer\Package\RootPackage;
 use GAYA\Typo3Coder\Composer\Command\CommandProvider;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class CommandProviderTest extends TestCase
@@ -18,6 +17,7 @@ final class CommandProviderTest extends TestCase
         foreach ([[], ['gaya/typo3-coder' => ['command' => []]]] as $extra) {
             self::assertEquals($builtIns, $this->provider($extra)->getCommands());
         }
+
         $commands = $this->provider(['gaya/typo3-coder' => ['command' => [
             'run' => ['rector', 'fractor'],
             'maintenance' => ['migrate', 'phpstan:baseline'],
@@ -51,7 +51,7 @@ final class CommandProviderTest extends TestCase
             try {
                 $this->provider(['gaya/typo3-coder' => ['command' => $groups]])->getCommands();
                 self::fail('Invalid configuration was accepted: ' . json_encode($groups));
-            } catch (InvalidArgumentException $exception) {
+            } catch (\InvalidArgumentException $exception) {
                 self::assertStringContainsString('extra.gaya/typo3-coder.' . $path, $exception->getMessage());
             }
         }
@@ -62,6 +62,7 @@ final class CommandProviderTest extends TestCase
         $composer = new Composer();
         $package = new RootPackage('gaya/consumer', '1.0.0.0', '1.0.0');
         $package->setExtra($extra);
+
         $composer->setPackage($package);
         return new CommandProvider(['composer' => $composer]);
     }

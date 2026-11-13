@@ -11,7 +11,7 @@ abstract class AbstractPhpstanCommand extends AbstractCommand
     private function ensureBuildDirectory(ProjectContext $context): void
     {
         if (!is_dir($context->absolute('build'))) {
-            mkdir($context->absolute('build'), 0775, true);
+            mkdir($context->absolute('build'), 0o775, true);
         }
     }
 
@@ -22,10 +22,12 @@ abstract class AbstractPhpstanCommand extends AbstractCommand
         if (is_file($baseline)) {
             $includes[] = $baseline;
         }
+
         if (is_file($context->absolute('build/phpstan.neon'))
             && realpath($context->absolute('build/phpstan.neon')) !== realpath($includes[0])) {
             $includes[] = $context->absolute('build/phpstan.neon');
         }
+
         $file = tempnam(sys_get_temp_dir(), 'coder-phpstan-') . '.neon';
         file_put_contents($file, "includes:\n    - " . implode("\n    - ", $includes) . "\nparameters:\n    level: " . $context->phpstanLevel() . "\n    paths:\n        - " . implode("\n        - ", $context->phpFiles()) . "\n");
         return $file;

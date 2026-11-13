@@ -5,25 +5,29 @@ declare(strict_types=1);
 namespace GAYA\Typo3Coder\Configuration;
 
 use Composer\Composer;
-use InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
 
-final class ProjectContext
+final readonly class ProjectContext
 {
-    public readonly string $vendorDir;
-    public readonly string $binDir;
-    public readonly string $webDir;
-    public readonly string $profile;
-    public readonly array $options;
+    public string $vendorDir;
 
-    public function __construct(public readonly string $rootDir, array $manifest, array $composerConfig = [])
+    public string $binDir;
+
+    public string $webDir;
+
+    public string $profile;
+
+    public array $options;
+
+    public function __construct(public string $rootDir, array $manifest, array $composerConfig = [])
     {
         $config = array_replace($manifest['config'] ?? [], $composerConfig);
         $this->options = $manifest['extra']['gaya/typo3-coder'] ?? [];
         $this->profile = $this->options['profile'] ?? (($manifest['type'] ?? '') === 'typo3-cms-extension' ? 'extension' : 'project');
         if (!in_array($this->profile, ['project', 'extension'], true)) {
-            throw new InvalidArgumentException('Coder profile must be project or extension.');
+            throw new \InvalidArgumentException('Coder profile must be project or extension.', 7117763716);
         }
+
         $this->vendorDir = $this->absolute($config['vendor-dir'] ?? 'vendor');
         $this->binDir = $this->absolute($config['bin-dir'] ?? $this->vendorDir . '/bin');
         $this->webDir = $this->absolute($manifest['extra']['typo3/cms']['web-dir'] ?? 'public');
@@ -47,6 +51,7 @@ final class ProjectContext
             $data = json_decode($serialized, true, 512, JSON_THROW_ON_ERROR);
             return new self($data['root'], $data['manifest'], $data['config']);
         }
+
         $root = getcwd();
         $file = getenv('COMPOSER') ?: 'composer.json';
         $manifest = json_decode(file_get_contents((str_starts_with($file, '/') ? $file : $root . '/' . $file)), true, 512, JSON_THROW_ON_ERROR);
@@ -70,12 +75,14 @@ final class ProjectContext
             if ($segment === '.' || $segment === '') {
                 continue;
             }
+
             if ($segment === '..') {
                 array_pop($segments);
             } else {
                 $segments[] = $segment;
             }
         }
+
         return (str_starts_with($path, '/') ? '/' : '') . implode('/', $segments);
     }
 
@@ -117,11 +124,13 @@ final class ProjectContext
                     $exclude[] = substr($excluded, strlen($path) + 1);
                 }
             }
+
             $finder = (new Finder())->files()->name($patterns)->in($path)->exclude($exclude)->sortByName();
             foreach ($finder as $file) {
                 $files[] = $file->getPathname();
             }
         }
+
         return array_values(array_unique($files));
     }
 
@@ -136,12 +145,14 @@ final class ProjectContext
     {
         $paths = [];
         foreach ($patterns as $pattern) {
-            $matches = array_values(array_filter(glob($this->absolute($pattern), GLOB_ONLYDIR) ?: [], 'is_dir'));
+            $matches = array_values(array_filter(glob($this->absolute($pattern), GLOB_ONLYDIR) ?: [], is_dir(...)));
             if ($required && $matches === []) {
-                throw new InvalidArgumentException('Configured directory does not exist: ' . $pattern);
+                throw new \InvalidArgumentException('Configured directory does not exist: ' . $pattern, 9603405061);
             }
+
             array_push($paths, ...$matches);
         }
+
         return array_values(array_unique($paths));
     }
 
@@ -161,7 +172,7 @@ final class ProjectContext
 
     public function phpstanLevel(): int
     {
-        return (int) ($this->options['phpstan-level'] ?? 5);
+        return (int)($this->options['phpstan-level'] ?? 5);
     }
 
     public function phpVersion(): int

@@ -21,6 +21,7 @@ final class FractorCommand extends AbstractCommand
         if ($this->isContinuousIntegration($input)) {
             $arguments[] = '--dry-run';
         }
+
         return $this->runTool($context, $input, $output, 'fractor', $arguments);
     }
 }

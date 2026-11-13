@@ -24,16 +24,19 @@ abstract class AbstractTestsCommand extends AbstractCommand
             $output->writeln('No ' . $suite . ' tests found; nothing to run.');
             return 0;
         }
+
         $temporary = (new PhpUnitConfiguration())->create($context, $suite);
         $arguments = ['--configuration', $temporary];
         if ($this->isContinuousIntegration($input)) {
             $arguments[] = '--no-progress';
         }
+
         try {
             if (!(new PhpUnitConfiguration())->hasTests($temporary)) {
                 $output->writeln('No tests found; nothing to run.');
                 return 0;
             }
+
             return $this->runTool($context, $input, $output, 'phpunit', $arguments);
         } finally {
             unlink($temporary);

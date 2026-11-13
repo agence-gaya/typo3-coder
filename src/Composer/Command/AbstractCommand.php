@@ -40,7 +40,9 @@ abstract class AbstractCommand extends BaseCommand
         return dirname(__DIR__, 3) . '/build';
     }
 
-    /** @param list<string> $arguments */
+    /**
+     * @param list<string> $arguments
+     */
     protected function runTool(ProjectContext $context, InputInterface $input, OutputInterface $output, string $binary, array $arguments): int
     {
         $process = new Process([PHP_BINARY, $context->binDir . '/' . $binary, ...$arguments, ...$input->getArgument('tool-arguments')], $context->rootDir, ['TYPO3_CODER_CONTEXT' => $context->environment()]);

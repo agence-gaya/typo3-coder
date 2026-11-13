@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Process\Process;
+
 // Run with: php Tests/command-smoke.php /path/to/composer /path/to/consumer/vendor
 $composer = $argv[1] ?? '/usr/local/bin/composer';
 $vendor = realpath($argv[2] ?? dirname(__DIR__, 2));
@@ -18,11 +20,12 @@ $write = static function () use ($root, &$manifest): void {
     file_put_contents($root . '/composer.json', json_encode($manifest, JSON_THROW_ON_ERROR));
 };
 $run = static function (string $suite, int $expected) use ($root, $composer): void {
-    $process = new Symfony\Component\Process\Process([PHP_BINARY, $composer, '--working-dir=' . $root, 'coder:tests:' . $suite, '--continuous-integration']);
+    $process = new Process([PHP_BINARY, $composer, '--working-dir=' . $root, 'coder:tests:' . $suite, '--continuous-integration']);
     $process->setTimeout(60);
+
     $status = $process->run();
     if ($status !== $expected) {
-        throw new RuntimeException('Expected ' . $expected . ', got ' . $status . "\n" . $process->getOutput() . $process->getErrorOutput());
+        throw new RuntimeException('Expected ' . $expected . ', got ' . $status . "\n" . $process->getOutput() . $process->getErrorOutput(), 2661410848);
     }
 };
 try {
@@ -38,8 +41,9 @@ try {
     $run('unit', 1);
     $after = glob(sys_get_temp_dir() . '/typo3-coder-phpunit-*');
     if (array_diff($after, $before) !== []) {
-        throw new RuntimeException('Temporary PHPUnit configuration leaked.');
+        throw new RuntimeException('Temporary PHPUnit configuration leaked.', 8365728030);
     }
+
     $manifest['extra']['gaya/typo3-coder']['tests']['unit'] = ['does-not-exist'];
     $write();
     $run('unit', 1);
@@ -49,5 +53,6 @@ try {
     foreach ($files as $file) {
         $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
     }
+
     rmdir($root);
 }

@@ -22,6 +22,7 @@ final class TypoScriptLintCommand extends AbstractCommand
             $output->writeln('No TypoScript files found; nothing to run.');
             return 0;
         }
+
         $arguments = ['--config', $this->resources() . '/tslint.yaml'];
         array_push($arguments, ...$files);
         return $this->runTool($context, $input, $output, 'typoscript-lint', $arguments);
